@@ -1,4 +1,4 @@
-set_languages("c++20")
+set_languages("c++17")
 
 add_rules("mode.debug", "mode.release", "mode.coverage")
 add_requires("doctest", {alias = "doctest"})
@@ -17,34 +17,25 @@ elseif is_plat("windows") then
 end
 
 -- header only package
--- target("ProjGeom")
---     set_kind("static")
---     add_includedirs("include", {public = true})
---     if is_plat("linux") then
---         add_cxflags("-fconcepts", {force = true})
---     elseif is_plat("windows") then
---         add_cxflags("/W4 /WX /wd4819", {force = true})
---     end
---     add_packages("range-v3")
 
 target("test_transranger")
     set_kind("binary")
     add_includedirs("include", {public = true})
     add_files("tests/*.cpp")
-    add_packages("range-v3")
+    add_packages("range-v3", "doctest")
 
-target("test_perf")
-    set_kind("binary")
-    add_includedirs("include", {public = true})
-    add_files("perf/*.cpp")
-    -- require nanobench installed
-    add_packages("range-v3")
-
-target("annex")
-    set_kind("binary")
-    add_includedirs("include", {public = true})
-    add_files("annex/*.cpp")
-    add_packages("range-v3")
+-- target("test_perf")
+--     set_kind("binary")
+--     add_includedirs("include", {public = true})
+--     add_files("perf/*.cpp")
+--     -- require nanobench installed
+--     add_packages("range-v3")
+--
+-- target("annex")
+--     set_kind("binary")
+--     add_includedirs("include", {public = true})
+--     add_files("annex/*.cpp")
+--     add_packages("range-v3")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
