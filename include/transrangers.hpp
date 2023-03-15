@@ -77,42 +77,6 @@ all(Range &&rng) {
   return all_copy<Range>{std::move(rng)};
 }
 
-// skip, skip_copy (assume the next item is available)
-template <typename Range> auto skip(Range &&rng) {
-  using std::begin;
-  using std::end;
-  using cursor = decltype(begin(rng));
-
-  // Sorry, I don't check if the second item is available.
-  return ranger<cursor>([first = ++begin(rng), last = end(rng)](auto dst)
-                            TRANSRANGERS_HOT_MUTABLE {
-                              auto it = first;
-                              while (it != last)
-                                if (!dst(it++)) {
-                                  first = it;
-                                  return false;
-                                }
-                              return true;
-                            });
-}
-
-template <typename Range> struct skip_copy {
-  using ranger = decltype(skip(std::declval<Range &>()));
-  using cursor = typename ranger::cursor;
-
-  template <typename F> auto operator()(const F &p) { return rgr(p); }
-
-  Range rng;
-  ranger rgr = skip(rng);
-};
-
-template <typename Range>
-typename std::enable_if<std::is_rvalue_reference<Range &&>::value,
-                        skip_copy<Range>>::type
-skip(Range &&rng) {
-  return skip_copy<Range>{std::move(rng)};
-}
-
 // filter
 template <typename Pred> auto pred_box(Pred pred) {
   return
@@ -157,16 +121,6 @@ template <typename F, typename Ranger> auto transform(F f, Ranger rgr) {
       return dst(cursor{p, &f});
     });
   });
-}
-
-template <typename Ranger> auto enumerate(Ranger rgr) {
-  return transform(
-      [index = std::size_t(0)](auto &&value) TRANSRANGERS_HOT_MUTABLE {
-        auto old = index;
-        index += 1;
-        return std::make_pair(old, std::move(value));
-      },
-      rgr);
 }
 
 // take
@@ -234,7 +188,7 @@ template <typename Ranger> auto unique(Ranger rgr) {
 struct identity_adaption {
   template <typename T> static decltype(auto) adapt(T &&srgr) {
     return std::forward<decltype(srgr)>(srgr);
-  };
+  }
 };
 
 template <typename Ranger, typename Adaption = identity_adaption>
@@ -265,7 +219,7 @@ auto join(Ranger rgr) {
 struct all_adaption {
   template <typename T> static auto adapt(T &&srgn) {
     return all(std::forward<decltype(srgn)>(srgn));
-  };
+  }
 };
 
 template <typename Ranger> auto ranger_join(Ranger rgr) {
