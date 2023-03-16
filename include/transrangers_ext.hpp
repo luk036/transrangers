@@ -50,7 +50,7 @@ template <typename Range> auto skip_first(Range &&rng) {
 }
 
 template <typename Range> struct skip_first_copy {
-  using ranger = decltype(skip(std::declval<Range &>()));
+  using ranger = decltype(skip_first(std::declval<Range &>()));
   using cursor = typename ranger::cursor;
 
   template <typename F> auto operator()(const F &p) { return rgr(p); }
@@ -86,7 +86,7 @@ template <typename Range> auto skip_last(Range &&rng) {
 }
 
 template <typename Range> struct skip_last_copy {
-  using ranger = decltype(skip(std::declval<Range &>()));
+  using ranger = decltype(skip_last(std::declval<Range &>()));
   using cursor = typename ranger::cursor;
 
   template <typename F> auto operator()(const F &p) { return rgr(p); }
@@ -122,7 +122,7 @@ template <typename Range> auto skip_both(Range &&rng) {
 }
 
 template <typename Range> struct skip_both_copy {
-  using ranger = decltype(skip(std::declval<Range &>()));
+  using ranger = decltype(skip_both(std::declval<Range &>()));
   using cursor = typename ranger::cursor;
 
   template <typename F> auto operator()(const F &p) { return rgr(p); }

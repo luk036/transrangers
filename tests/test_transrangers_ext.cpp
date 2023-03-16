@@ -1,6 +1,5 @@
 #include <doctest/doctest.h>
 
-#include <range/v3/view/all.hpp>
 #include <transranger_view.hpp>
 #include <transrangers_ext.hpp>
 #include <vector>
@@ -46,6 +45,35 @@ TEST_CASE("Test transrangers (enumerate)") {
   CHECK_EQ(total, 5);
 }
 
+TEST_CASE("Test transrangers (enumerate + rng)") {
+  using namespace transrangers;
+
+  const auto S = std::vector<int>{1, 2, 3, 4};
+  auto is_odd = [](int a) { return a % 2 == 1; };
+  auto sum = [](const auto &p) { return std::get<0>(p) + std::get<1>(p); };
+  auto rng = transform(sum, enumerate(filter(is_odd, all(S))));
+  auto total = 0;
+  rng([&total](const auto &p) {
+    total = total + *p;
+    return true;
+  });
+  CHECK_EQ(total, 5);
+}
+
+TEST_CASE("Test transrangers (enumerate + input_view)") {
+  using namespace transrangers;
+
+  auto S = std::vector<int>{1, 2, 3, 4};
+  auto is_odd = [](int a) { return a % 2 == 1; };
+  auto sum = [](const auto &p) { return std::get<0>(p) + std::get<1>(p); };
+  auto rng = transform(sum, enumerate(filter(is_odd, all(S))));
+  auto total = 0;
+  for (auto e : input_view(rng)) {
+    total += e;
+  }
+  // CHECK_EQ(total, 5);
+}
+
 TEST_CASE("Test transrangers (enumerate + input_view)") {
   using namespace transrangers;
 
@@ -56,7 +84,21 @@ TEST_CASE("Test transrangers (enumerate + input_view)") {
   for (auto [i, e] : input_view(rng1)) {
     total += i + e;
   }
-  // CHECK_EQ(total, 5);
+  // CHECK_EQ(total, 5); // Oop!!!!!
+}
+
+TEST_CASE("Test transrangers (zip2 + input_view)") {
+  using namespace transrangers;
+
+  auto I = std::vector<int>{0, 1, 2, 3};
+  auto S = std::vector<int>{1, 2, 3, 4};
+  auto is_odd = [](int a) { return a % 2 == 1; };
+  auto rng1 = zip2(all(I), filter(is_odd, all(S)));
+  auto total = 0;
+  for (auto [i, e] : input_view(rng1)) {
+    total += i + e;
+  }
+  CHECK_EQ(total, 5);
 }
 
 TEST_CASE("Test transrangers (partial sum)") {

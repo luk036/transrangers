@@ -300,7 +300,6 @@ auto zip2(Ranger1 rgr1, Ranger2 rgr2) {
                finished = true;
                return false;
              }
-
              return dst(zp);
            }) ||
            finished;

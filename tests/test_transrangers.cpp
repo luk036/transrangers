@@ -1,9 +1,7 @@
 #include <doctest/doctest.h>
 
-#include <transranger_view.hpp>
 #include <transrangers.hpp>
 
-#include <map>
 #include <unordered_map>
 #include <vector>
 
@@ -29,25 +27,10 @@ TEST_CASE("Test transrangers (zip2)") {
   CHECK_EQ(total, 5);
 }
 
-TEST_CASE("Test transrangers (zip2 + input_view)") {
-  using namespace transrangers;
-
-  auto I = std::vector<int>{0, 1, 2, 3};
-  auto S = std::vector<int>{1, 2, 3, 4};
-  auto is_odd = [](int a) { return a % 2 == 1; };
-  auto rng1 = zip2(all(I), filter(is_odd, all(S)));
-  auto total = 0;
-  for (auto [i, e] : input_view(rng1)) {
-    total += i + e;
-  }
-  CHECK_EQ(total, 5);
-}
-
 TEST_CASE("Test map") {
-  using Edge = std::pair<int, int>;
+  using KV = std::pair<int, int>;
 
-  auto S = std::unordered_map<int, int>{Edge{0, 1}, Edge{2, 3}, Edge{3, 4},
-                                        Edge{4, 2}};
+  auto S = std::unordered_map<int, int>{KV{0, 1}, KV{2, 3}, KV{3, 4}, KV{4, 2}};
   auto count = 0;
   for ([[maybe_unused]] auto e : S) {
     ++count;
@@ -57,10 +40,10 @@ TEST_CASE("Test map") {
 
 TEST_CASE("Test transrangers (map)") {
   using namespace transrangers;
-  using Edge = std::pair<int, int>;
 
-  auto S = std::unordered_map<int, int>{Edge{0, 1}, Edge{2, 3}, Edge{3, 4},
-                                        Edge{4, 2}};
+  using KV = std::pair<int, int>;
+
+  auto S = std::unordered_map<int, int>{KV{0, 1}, KV{2, 3}, KV{3, 4}, KV{4, 2}};
   auto rng = all(S);
   auto count = 0;
   rng([&count](const auto &) {

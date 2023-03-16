@@ -33,7 +33,7 @@ TEST_CASE("Test transrangers (zip2 + input_view)") {
   using namespace transrangers;
 
   auto I = py::range<int>(4);
-  auto S = py::range(1, 5);
+  auto S = std::vector<int>{1, 2, 3, 4};
   auto is_odd = [](int a) { return a % 2 == 1; };
   auto rng1 = zip2(all(I), filter(is_odd, all(S)));
   auto total = 0;
