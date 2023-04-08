@@ -110,3 +110,15 @@ TEST_CASE("Test transrangers (partial sum)") {
   CHECK_EQ(total, 10);
   CHECK_EQ(S[3], 10);
 }
+
+TEST_CASE("Test transrangers (zip)") {
+  using namespace transrangers;
+
+  auto I = std::vector<int>{0, 1, 2, 3};
+  auto S = std::vector<int>{1, 2, 3, 4};
+  auto is_odd = [](int a) { return a % 2 == 1; };
+  auto sum = [](const auto &p) { return std::get<0>(p) + std::get<1>(p); };
+  auto rng = transform(sum, zip(all(I), filter(is_odd, all(S))));
+  auto total = accumulate(rng, 0); // 0 + 1 + 1 + 3
+  CHECK_EQ(total, 5);
+}
