@@ -61,9 +61,9 @@ template <typename Range> auto skip_first(Range &&rng) {
 }
 
 /**
- * @brief 
- * 
- * @tparam Range 
+ * @brief
+ *
+ * @tparam Range
  */
 template <typename Range> struct skip_first_copy {
   using ranger = decltype(skip_first(std::declval<Range &>()));

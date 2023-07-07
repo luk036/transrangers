@@ -14,8 +14,8 @@ At its core, a Rust iterator implements the following *trait* (generic interface
 ```rust
 // std::iter::Iterator
 trait Iterator {
-    type Item;
-    fn next(&mut self) -> Option<Self::Item>;
+  type Item;
+  fn next(&mut self)->Option<Self::Item>;
 }
 ```
 Whereas in C++ (input) iterators have a triad of operations for dereferencing, increment and comparison, Rust coalesces the entire functionality into a single `next` method that returns the "pointed-to" value (or nothing if at the end of the range) and moves to the following position.
@@ -23,7 +23,7 @@ Whereas in C++ (input) iterators have a triad of operations for dereferencing, i
 In a sense, Rust iterators are more similar to C++ ranges than actual C++ iterators, since range termination is checked internally without the need for user code to keep an end iterator/sentinel for comparison. This allows for easy composition via *iterator adapters*:
 ```rust
 for item in data.iter().filter(|x| *x % 2 == 0).map(|x| x * 3) {
-    process(item);
+  process(item);
 }
 ```
 Iterator adapters are then functionally equivalent to C++ ranges/Range-v3 range adaptors:
@@ -59,8 +59,10 @@ It should also be extendable in the same way as Iterators, which causes pushgen,
 to be built around a single trait:
 ```rust
 pub trait Generator {
-    type Output;
-    fn run(&mut self, output: impl FnMut(Self::Output) -> crate::ValueResult) -> GeneratorResult;
+  type Output;
+  fn run(&mut self, output
+         : impl FnMut(Self::Output)->crate::ValueResult)
+      ->GeneratorResult;
 }
 ```
 The `run` method is analogous to the ranger call operator in transrangers, invoking a consumption function (`output`)
@@ -78,10 +80,10 @@ Here is a small example of using `pushgen`:
 use pushgen::{GeneratorExt, SliceGenerator};
 
 fn main() {
-    let data = [1, 2, 3, 4];
-    SliceGenerator::new(&data)
-        .map(|x| format!("Hello {}", x))
-        .for_each(|x| println!("{}", x));
+  let data = [ 1, 2, 3, 4 ];
+  SliceGenerator::new (&data)
+      .map(| x | format !("Hello {}", x))
+      .for_each(| x | println !("{}", x));
 }
 ```
 
@@ -115,17 +117,17 @@ virtually impossible in transrangers.
 ```rust
 let mut index = 0usize;
 range.map(move |value| {
-    let current = index;
-    index += 1;
-    (current, value) // Return a tuple of index and value
+  let current = index;
+  index += 1;
+  (current, value) // Return a tuple of index and value
 });
 ```
 The same code in transrangers
 ```cpp
 transform([index=std::size_t(0)](auto&& value) mutable {
-    auto old = index;
-    index += 1;
-    return make_pair(old, move(value));
+  auto old = index;
+  index += 1;
+  return make_pair(old, move(value));
 }, range);
 ```
 would cause the index associated with each value to change
