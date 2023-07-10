@@ -154,7 +154,17 @@ skip_both(Range &&rng) {
   return skip_both_copy<Range>{std::move(rng)};
 }
 
-// enumerate
+/**
+ * @brief Enumerate
+ *
+ * The `enumerate` function is a part of the Transrangers library. It takes a
+ * range `rgr` as input and returns a new range where each element is paired
+ * with its corresponding index.
+ *
+ * @tparam Ranger
+ * @param rgr
+ * @return auto
+ */
 template <typename Ranger> auto enumerate(Ranger rgr) {
   return transform(
       [index = std::size_t(0)](auto &&value) TRANSRANGERS_HOT_MUTABLE {
@@ -165,7 +175,19 @@ template <typename Ranger> auto enumerate(Ranger rgr) {
       rgr);
 }
 
-// partial sum (cummutative sum)
+/**
+ * @brief partial sum (cummutative sum)
+ *
+ * The `partial_sum` function is a part of the Transrangers library. It takes a
+ * range `rgr` and an initial value `init` as input and returns the cumulative
+ * sum of the elements in the range.
+ *
+ * @tparam Ranger
+ * @tparam T
+ * @param rgr
+ * @param init
+ * @return T
+ */
 template <typename Ranger, typename T> T partial_sum(Ranger rgr, T init) {
   rgr([&init](const auto &p) TRANSRANGERS_HOT {
     init = std::move(init) + *p;
@@ -175,7 +197,16 @@ template <typename Ranger, typename T> T partial_sum(Ranger rgr, T init) {
   return init;
 }
 
-// zip
+/**
+ * @brief __lambda_255_33
+ *
+ * The code snippet defines a lambda class named `__lambda_255_33` that is used
+ * as a helper for the `zip` function in the Transrangers library.
+ *
+ * @tparam I
+ * @tparam Ranger
+ * @tparam Rangers
+ */
 template <std::size_t I, typename Ranger, typename... Rangers>
 class __lambda_255_33 {
   using cursor = zip_cursor<Ranger, Rangers...>;
@@ -261,6 +292,20 @@ public:
       : zp{_zp}, rgr{_rgr}, rgrs{_rgrs...} {}
 };
 
+/**
+ * @brief zip
+ *
+ * The `zip` function is a part of the Transrangers library. It takes a range
+ * `rgr` and one or more additional ranges `rgrs` as input and returns a new
+ * range where each element is a tuple containing the corresponding elements
+ * from all the input ranges.
+ *
+ * @tparam Ranger
+ * @tparam Rangers
+ * @param rgr
+ * @param rgrs
+ * @return auto
+ */
 template <typename Ranger, typename... Rangers>
 auto zip(Ranger rgr, Rangers... rgrs) {
   using cursor = zip_cursor<Ranger, Rangers...>;
